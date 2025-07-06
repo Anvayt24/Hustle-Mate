@@ -5,7 +5,8 @@ from study_tool import explain_concept, generate_notes, generate_flashcards, gen
 from agents import get_study_agent
 from agents import get_assignment_agent
 from assignment_tool import get_assignments_from_classroom
-
+from agents import get_reminder_agent
+from reminder_tools import add_reminder , start_service , check_reminders
 try:
     image_path = "timetable/timetable.jpg"
     timetable_text = extract_timetable_text(image_path)
@@ -94,22 +95,33 @@ register_function(
     name="get_assignments_from_classroom",
     description="Fetches and summarizes assignments from Google Classroom."
 )
+# reminder agent functions
+reminder = get_reminder_agent()
+register_function(
+    add_reminder,
+    caller=reminder,
+    executor=user,
+    name="add_reminder",
+    description="Adds a reminder for a task at a specified time via email or WhatsApp."
+)   
+start_service()
 
-
-
-"""user.initiate_chat(
+user.initiate_chat(
     planner,
     message=f"plan my day on this routine: {user_routine}"
 )
-"""
-"""user.initiate_chat(
+
+user.initiate_chat(
     study,
     message="I need help with my studies. I have some doubts and need explanations on various topics."
-)"""
+)
 
 user.initiate_chat(
     assignment,
     message="I need to check my assignments from Google Classroom and summarize them."
 )
-
+user.initiate_chat(
+    reminder,
+    message="I want to set reminders for my tasks via email or WhatsApp."
+)
 

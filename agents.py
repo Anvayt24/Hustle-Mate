@@ -57,3 +57,20 @@ def get_assignment_agent():
             ]
         }
     )
+
+#reminder agent
+def get_reminder_agent():
+    return AssistantAgent(
+        name="ReminderAgent",
+        description="An AI agent that helps students set and manage reminders for tasks via email or WhatsApp.",
+        llm_config={
+            "config_list": [
+                {
+                    "model": "gemini-2.5-flash",
+                    "api_key": GEMINI_API_KEY,
+                    "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
+                    "api_type": "openai",
+                }
+            ]
+        }
+    )

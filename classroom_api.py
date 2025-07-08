@@ -9,7 +9,7 @@ def fetch_classroom_assignments():
     service = build('classroom', 'v1', credentials=creds)
 
     assignments = []
-    courses = service.courses().list().execute().get('courses', []) # get list of courses
+    courses = service.courses().list().execute().get('courses', []) # get course in the list 
 
     for course in courses:
         coursework = service.courses().courseWork().list(courseId=course['id']).execute().get('courseWork', []) # get work for each course

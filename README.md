@@ -26,5 +26,5 @@ OCR (via OpenCV & Tesseract)
 Multi-agent protocol (AutoGen)
 
 # 🛠 In Progress
-Reminder agent
-Resource finder agent 
+agent to agent protocol,
+MCP server (under the hood)

@@ -74,3 +74,21 @@ def get_reminder_agent():
             ]
         }
     )
+
+# progress reprot agent 
+
+def get_progress_agent():
+    return AssistantAgent(
+        name="ProgressAgent",
+        description="An AI agent that tracks and reports student progress, allowing them to log tasks and receive updates via email or WhatsApp.",
+        llm_config={
+            "config_list": [
+                {
+                    "model": "gemini-2.5-flash",
+                    "api_key": GEMINI_API_KEY,
+                    "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
+                    "api_type": "openai",
+                }
+            ]
+        }
+    )

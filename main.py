@@ -2,11 +2,11 @@ from autogen import UserProxyAgent, register_function
 from agents import get_planner_agent 
 from planner_tools import extract_timetable_text, make_day_routine
 from study_tool import explain_concept, generate_notes, generate_flashcards, generate_quiz, extract_text_from_image, add_doubt, get_doubts
-from agents import get_study_agent
-from agents import get_assignment_agent
+from agents import get_study_agent , get_assignment_agent, get_reminder_agent, get_progress_agent 
 from assignment_tool import get_assignments_from_classroom
-from agents import get_reminder_agent
 from reminder_tools import add_reminder , start_service , check_reminders
+from progress_tools import progress_log, get_progress, send_progress
+
 try:
     image_path = "timetable/timetable.jpg"
     timetable_text = extract_timetable_text(image_path)
@@ -106,6 +106,31 @@ register_function(
 )   
 start_service()
 
+# progress agent functions
+progress = get_progress_agent()
+register_function(
+    progress_log,
+    caller=progress,
+    executor=user,
+    name="progress_log",
+    description="Logs the progress of a task with its status and timestamp."
+)
+
+register_function(
+    get_progress,
+    caller=progress,
+    executor=user,
+    name="get_progress_report",
+    description="Retrieves the logged progress of tasks."
+)
+register_function(
+    send_progress,
+    caller=progress,
+    executor=user,
+    name="send_progress_report",
+    description="Sends the progress report via email or WhatsApp."
+)
+
 user.initiate_chat(
     planner,
     message=f"plan my day on this routine: {user_routine}"
@@ -123,5 +148,10 @@ user.initiate_chat(
 user.initiate_chat(
     reminder,
     message="I want to set reminders for my tasks via email or WhatsApp."
+)
+
+user.initiate_chat(
+    progress,
+    message="I want to log my progress on tasks and send reports via email or WhatsApp."
 )
 

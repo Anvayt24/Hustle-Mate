@@ -8,7 +8,16 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 def get_planner_agent():
     return AssistantAgent(
         name="PlannerAgent",
-        system_message="You are a helpful agent that creates productive student day plans using the available tool. You are an agent that can collaborate with other agents in the group to complete tasks.",
+        system_message= """You are a smart planner agent for students. 
+When a user describes their day or study plan, you must:
+1. Generate a detailed schedule using the tool 'generate_day_plan'.
+2. If the user mentions any topic to revise or quiz, call the appropriate tools from the StudyAgent like 'generate_notes' or 'generate_quiz'.
+3. If the user asks to track assignments, call 'get_assignments_from_classroom' using AssignmentAgent.
+4. If reminders are needed, call 'add_reminder' using ReminderAgent.
+5. After study or assignment tasks, call 'progress_log' and optionally 'send_progress_report'.
+
+Do all these automatically based on the users message without asking them again.
+"""
         llm_config={
             "config_list": [
                 {

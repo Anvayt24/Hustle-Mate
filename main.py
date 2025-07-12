@@ -1,4 +1,4 @@
-from autogen import UserProxyAgent, register_function 
+from autogen import  UserProxyAgent, register_function 
 from agents import get_planner_agent 
 from planner_tools import extract_timetable_text, make_day_routine
 from study_tool import explain_concept, generate_notes, generate_flashcards, generate_quiz, extract_text_from_image, add_doubt, get_doubts
@@ -6,6 +6,16 @@ from agents import get_study_agent , get_assignment_agent, get_reminder_agent, g
 from assignment_tool import get_assignments_from_classroom
 from reminder_tools import add_reminder , start_service , check_reminders
 from progress_tools import progress_log, get_progress, send_progress
+from autogen import GroupChat , GroupChatManager
+import os
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='[%(levelname)s - %(asctime)s] %(message)s',
+    datefmt='%H:%M:%S'
+)
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 try:
     image_path = "timetable/timetable.jpg"
@@ -107,7 +117,8 @@ register_function(
 start_service()
 
 # progress agent functions
-progress = get_progress_agent()
+progress = get_progress_agent() #instance of progress agent
+
 register_function(
     progress_log,
     caller=progress,
@@ -131,27 +142,32 @@ register_function(
     description="Sends the progress report via email or WhatsApp."
 )
 
+# connecting all agents to the user
+groupchat = GroupChat(
+    agents=[user, planner, reminder, assignment, study, progress],
+    messages=[],
+    max_round=20
+)
+
+manager = GroupChatManager(
+    groupchat=groupchat,
+    llm_config={
+            "config_list": [
+                {
+                    "model": "gemini-2.5-flash",
+                    "api_key": GEMINI_API_KEY,
+                    "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
+                    "api_type": "openai",
+                }
+            ]
+    }
+)
+
 user.initiate_chat(
-    planner,
+    manager,
     message=f"plan my day on this routine: {user_routine}"
 )
 
-user.initiate_chat(
-    study,
-    message="I need help with my studies. I have some doubts and need explanations on various topics."
-)
 
-user.initiate_chat(
-    assignment,
-    message="I need to check my assignments from Google Classroom and summarize them."
-)
-user.initiate_chat(
-    reminder,
-    message="I want to set reminders for my tasks via email or WhatsApp."
-)
 
-user.initiate_chat(
-    progress,
-    message="I want to log my progress on tasks and send reports via email or WhatsApp."
-)
 

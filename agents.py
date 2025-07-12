@@ -8,7 +8,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 def get_planner_agent():
     return AssistantAgent(
         name="PlannerAgent",
-        system_message="You are a helpful agent that creates productive student day plans using the available tool.",
+        system_message="You are a helpful agent that creates productive student day plans using the available tool. You are an agent that can collaborate with other agents in the group to complete tasks.",
         llm_config={
             "config_list": [
                 {
@@ -26,7 +26,7 @@ def get_planner_agent():
 def get_study_agent():
     return AssistantAgent(
         name="studyagent",
-        description="An AI agent that helps students with study-related tasks such as explaining concepts, generating notes, flashcards, quizzes, and managing doubts.",
+        system_message="An AI agent that helps students with study-related tasks such as explaining concepts, generating notes, flashcards, quizzes, and managing doubts, You are an agent that can collaborate with other agents in the group to complete tasks.",
         llm_config={
             "config_list":[
                 {
@@ -44,7 +44,7 @@ def get_study_agent():
 def get_assignment_agent():
     return AssistantAgent(
         name="AssignmentAgent",
-        description="An AI agent that fetches and summarizes assignments from Google Classroom.",
+        system_message="An AI agent that fetches and summarizes assignments from Google Classroom, You are an agent that can collaborate with other agents in the group to complete tasks.",
         llm_config={
             "config_list": [
                 {
@@ -62,7 +62,7 @@ def get_assignment_agent():
 def get_reminder_agent():
     return AssistantAgent(
         name="ReminderAgent",
-        description="An AI agent that helps students set and manage reminders for tasks via email or WhatsApp.",
+        system_message="An AI agent that helps students set and manage reminders for tasks via email or WhatsApp, You are an agent that can collaborate with other agents in the group to complete tasks.",
         llm_config={
             "config_list": [
                 {
@@ -80,7 +80,7 @@ def get_reminder_agent():
 def get_progress_agent():
     return AssistantAgent(
         name="ProgressAgent",
-        description="An AI agent that tracks and reports student progress, allowing them to log tasks and receive updates via email or WhatsApp.",
+        system_message="An AI agent that tracks and reports student progress, allowing them to log tasks and receive updates via email or WhatsApp, You are an agent that can collaborate with other agents in the group to complete tasks.",
         llm_config={
             "config_list": [
                 {

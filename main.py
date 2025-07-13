@@ -2,7 +2,7 @@ from autogen import  UserProxyAgent, register_function
 from agents import get_planner_agent 
 from planner_tools import extract_timetable_text, make_day_routine
 from study_tool import explain_concept, generate_notes, generate_flashcards, generate_quiz, extract_text_from_image, add_doubt, get_doubts
-from agents import get_study_agent , get_assignment_agent, get_reminder_agent, get_progress_agent 
+from agents import get_study_agent , get_assignment_agent, get_reminder_agent, get_progress_agent , get_coordinator_agent 
 from assignment_tool import get_assignments_from_classroom
 from reminder_tools import add_reminder , start_service , check_reminders
 from progress_tools import progress_log, get_progress, send_progress
@@ -30,7 +30,12 @@ user = UserProxyAgent(
     name="StudentUser",
     human_input_mode="ALWAYS",
     code_execution_config={"work_dir": "coding", "use_docker": False}
+
 )
+
+# coordinator agent
+master_agent = get_coordinator_agent()
+
 # planner agent functions
 planner = get_planner_agent()
 study= get_study_agent()
@@ -40,57 +45,57 @@ def generate_day_plan(routine: str) -> str:
 
 register_function(
     generate_day_plan,
-    caller=planner,  # The planner agent will "call" or suggest this function
-    executor=user,   # The user agent will "execute" this function
+    caller=master_agent,  # The planner agent will "call" or suggest this function
+    executor=planner,   # The user agent will "execute" this function
     name="generate_day_plan",
     description="Generates a student day plan based on a given routine and available timetable information."
 )
  # study agent functions
 register_function(
     explain_concept,
-    caller = planner,
+    caller = master_agent,
     executor = study,
     name="explain_concept",
     description="Explains a concept simply to a student."
 )
 register_function(
     generate_notes,
-    caller = planner,
+    caller = master_agent,
     executor = study,
     name="generate_notes",
     description="Generates concise study notes on a given topic."
 )
 register_function(
     generate_flashcards,
-    caller = planner,
+    caller = master_agent,
     executor = study,
     name="generate_flashcards",
     description="Generates flashcards (question and answer pairs) for a given topic."
 )
 register_function(
     generate_quiz,
-    caller = planner,
+    caller = master_agent,
     executor = study,
     name="generate_quiz",
     description="Generates a quiz with multiple choice questions for a given topic."
 )
 register_function(
     extract_text_from_image,
-    caller = planner,
+    caller = master_agent,
     executor = study,
     name="extract_text_from_image",
     description="Extracts text from an image using OCR."
 )
 register_function(
     add_doubt,
-    caller = planner,
+    caller = master_agent,
     executor = study,
     name="add_doubt",
     description="Adds a question to the list of doubts."
 )
 register_function(
     get_doubts,
-    caller = planner,
+    caller = master_agent,
     executor = study,
     name="get_doubts",
     description="Retrieves the list of doubts added by the user."
@@ -100,7 +105,7 @@ register_function(
 assignment = get_assignment_agent()
 register_function(
     get_assignments_from_classroom,
-    caller=planner,
+    caller=master_agent,
     executor=assignment,
     name="get_assignments_from_classroom",
     description="Fetches and summarizes assignments from Google Classroom."
@@ -109,7 +114,7 @@ register_function(
 reminder = get_reminder_agent()
 register_function(
     add_reminder,
-    caller=planner,
+    caller=master_agent,
     executor= reminder,
     name="add_reminder",
     description="Adds a reminder for a task at a specified time via email or WhatsApp."
@@ -121,7 +126,7 @@ progress = get_progress_agent() #instance of progress agent
 
 register_function(
     progress_log,
-    caller=planner,
+    caller=master_agent,
     executor=progress,
     name="progress_log",
     description="Logs the progress of a task with its status and timestamp."
@@ -129,14 +134,14 @@ register_function(
 
 register_function(
     get_progress,
-    caller=planner,
+    caller=master_agent,
     executor=progress,
     name="get_progress_report",
     description="Retrieves the logged progress of tasks."
 )
 register_function(
     send_progress,
-    caller=planner,
+    caller=master_agent,
     executor=progress,
     name="send_progress_report",
     description="Sends the progress report via email or WhatsApp."

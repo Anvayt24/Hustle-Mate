@@ -3,21 +3,48 @@ from autogen import AssistantAgent
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
+#coordinator agent
+def get_coordinator_agent():
+    return AssistantAgent(
+        name="CoordinatorAgent",
+        system_message="""
+You are a smart student assistant who coordinates multiple agents:
+- PlannerAgent (for creating day plans)
+- StudyAgent (for notes, quizzes)
+- AssignmentAgent (for tracking assignments)
+- ReminderAgent (for scheduling reminders)
+- ProgressAgent (for logging progress)
+
+When a user describes their day or tasks, your job is to:
+1. Understand the request.
+2. Call appropriate tools from other agents.
+3. Do not ask the user again; handle everything autonomously.
+
+Examples:
+- If 'revise neural networks' → call generate_notes from StudyAgent.
+- If 'take quiz on CNN' → call generate_quiz from StudyAgent.
+- If 'track assignment on AI' → call get_assignments from AssignmentAgent.
+- If 'remind me at 4PM' → call add_reminder from ReminderAgent.
+- If 'log progress' → call progress_log from ProgressAgent.
+""",
+        llm_config={
+            "config_list": [
+                {
+                    "model": "gemini-2.5-flash",
+                    "api_key": GEMINI_API_KEY,
+                    "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
+                    "api_type": "openai",
+                }
+            ]
+        }
+    )
+
 
 #planner agent
 def get_planner_agent():
-    return AssistantAgent(
+    return AssistantAgent ( 
         name="PlannerAgent",
-        system_message= """You are a smart planner agent for students. 
-When a user describes their day or study plan, you must:
-1. Generate a detailed schedule using the tool 'generate_day_plan'.
-2. If the user mentions any topic to revise or quiz, call the appropriate tools from the StudyAgent like 'generate_notes' or 'generate_quiz'.
-3. If the user asks to track assignments, call 'get_assignments_from_classroom' using AssignmentAgent.
-4. If reminders are needed, call 'add_reminder' using ReminderAgent.
-5. After study or assignment tasks, call 'progress_log' and optionally 'send_progress_report'.
-
-Do all these automatically based on the users message without asking them again.
-"""
+        system_message= "You are a smart planner agent for students that plans their study schedule, You are an agent that can collaborate with other agents in the group to complete tasks.",
         llm_config={
             "config_list": [
                 {

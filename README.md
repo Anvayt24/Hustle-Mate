@@ -26,5 +26,5 @@ OCR (via OpenCV & Tesseract)
 Multi-agent protocol (AutoGen)
 
 # 🛠 In Progress
-agent to agent protocol,
-MCP server (under the hood)
+frontend development with streamlit,
+deployment
